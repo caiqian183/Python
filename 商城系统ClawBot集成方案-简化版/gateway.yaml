@@ -1,0 +1,48 @@
+# ClawBot网关配置文件
+
+# 服务器配置
+server:
+  host: 0.0.0.0
+  port: 8765
+  debug: false
+
+# 认证配置
+auth:
+  admin_token: your-secret-admin-token  # 管理员令牌，用于API调用
+  webhook_api_key: your-webhook-api-key  # Webhook API密钥，用于验证回调
+
+# 回调配置
+webhook:
+  url: https://your-domain.com/api/clawbot/webhook  # 替换为你的实际域名
+  timeout: 10  # 回调超时时间（秒）
+  retry: 3  # 失败重试次数
+
+# 微信配置
+wechat:
+  # 微信机器人相关配置
+  # 实际部署时需要根据ClawBot的要求配置
+  bot_config:
+    # 这里根据具体的ClawBot版本和配置要求填写
+    pass
+
+# 日志配置
+logging:
+  level: info
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: logs/clawbot-gateway.log
+
+# 多用户配置
+multi_user:
+  enabled: true
+  # 多用户路由配置
+  routing:
+    # 基于微信用户ID的路由
+    by_wechat_id: true
+    # 基于消息内容的路由
+    by_content: false
+
+# 插件配置
+plugins:
+  # 这里可以配置ClawBot插件
+  # 本方案不使用AI功能，所以不需要配置AI插件
+  enabled: []
