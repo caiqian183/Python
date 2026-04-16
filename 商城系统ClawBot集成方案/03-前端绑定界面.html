@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClawBot 绑定管理 - 商城个人中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.bound {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.unbound {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .qr-code-placeholder {
+            color: #999;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .wechat-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .wechat-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .wechat-details {
+            flex: 1;
+        }
+
+        .wechat-nickname {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .wechat-user-id {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .binding-timeline {
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .timeline-content:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .message-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .message-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message-item.inbound {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message-item.outbound .message-bubble {
+            background: #f0f0f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-item.inbound .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .countdown {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 ClawBot 绑定管理</h1>
+            <p>绑定微信 ClawBot，随时接收订单通知、查询订单状态</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 左侧：绑定状态和操作 -->
+            <div class="card">
+                <div class="card-title">
+                    绑定状态
+                    <span id="status-badge" class="status-badge unbound">
+                        <span class="status-dot"></span>
+                        未绑定
+                    </span>
+                </div>
+
+                <!-- 未绑定状态 -->
+                <div id="unbound-section">
+                    <div class="info-box">
+                        <div class="info-box-title">📱 绑定微信 ClawBot</div>
+                        <div class="info-box-content">
+                            <p>绑定后您可以：</p>
+                            <ul style="margin-top: 8px; margin-left: 20px;">
+                                <li>实时接收订单状态变更通知</li>
+                                <li>通过微信查询订单信息</li>
+                                <li>获取商品推荐和优惠活动</li>
+                                <li>随时与客服智能对话</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="qr-container" class="qr-code-container hidden">
+                        <div class="qr-code">
+                            <img id="qr-image" src="" alt="微信扫码">
+                        </div>
+                        <p style="font-size: 14px; color: #666;">请使用微信扫描二维码</p>
+                        <div id="countdown" class="countdown"></div>
+                    </div>
+
+                    <div id="qr-placeholder" class="qr-code-container">
+                        <div class="qr-code">
+                            <div class="qr-code-placeholder">
+                                <div style="font-size: 48px; margin-bottom: 8px;">📷</div>
+                                <div>点击下方按钮生成二维码</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button id="generate-qr-btn" class="btn btn-primary" onclick="generateQRCode()">
+                            生成二维码
+                        </button>
+                        <button id="refresh-qr-btn" class="btn btn-secondary hidden" onclick="generateQRCode()">
+                            刷新二维码
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 已绑定状态 -->
+                <div id="bound-section" class="hidden">
+                    <div class="wechat-info">
+                        <div class="wechat-avatar">👤</div>
+                        <div class="wechat-details">
+                            <div class="wechat-nickname" id="wechat-nickname">微信用户</div>
+                            <div class="wechat-user-id" id="wechat-user-id">wx_user_xxxxxx</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <div class="info-box-title">✅ 绑定成功</div>
+                        <div class="info-box-content">
+                            您的微信已成功绑定 ClawBot，现在可以：
+                            <ul style="margin-top: 8px; margin-left: 20px;">
+                                <li>实时接收订单通知</li>
+                                <li>通过微信查询订单</li>
+                                <li>享受智能客服服务</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-danger" onclick="unbindClawBot()">
+                            解绑 ClawBot
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：消息历史和功能说明 -->
+            <div class="card">
+                <div class="card-title">
+                    📋 消息历史
+                </div>
+
+                <div id="messages-empty" style="text-align: center; padding: 40px; color: #999;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">💬</div>
+                    <div>暂无消息记录</div>
+                    <div style="font-size: 12px; margin-top: 8px;">绑定 ClawBot 后将显示消息记录</div>
+                </div>
+
+                <div id="messages-list" class="message-list hidden">
+                    <div class="message-item outbound">
+                        <div class="message-bubble">
+                            您的订单 #12345 已发货！
+                            <div class="message-time">2026-04-16 10:30</div>
+                        </div>
+                    </div>
+                    <div class="message-item inbound">
+                        <div class="message-bubble">
+                            查询我的订单
+                            <div class="message-time">2026-04-16 10:28</div>
+                        </div>
+                    </div>
+                    <div class="message-item outbound">
+                        <div class="message-bubble">
+                            您的订单 #12345 已支付成功，我们将尽快为您发货。
+                            <div class="message-time">2026-04-16 09:15</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <div class="card-title" style="font-size: 16px;">💡 使用说明</div>
+                    <div class="binding-timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">1. 生成二维码</div>
+                                <div class="timeline-time">点击"生成二维码"按钮</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">2. 微信扫码</div>
+                                <div class="timeline-time">使用微信扫描二维码并确认</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">3. 完成绑定</div>
+                                <div class="timeline-time">系统自动完成绑定，享受便捷服务</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let userId = 1; // 实际项目中应该从登录状态获取
+        let pollingInterval = null;
+        let countdownInterval = null;
+
+        // 页面加载时检查绑定状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBindingStatus();
+            loadMessageHistory();
+        });
+
+        // 生成二维码
+        async function generateQRCode() {
+            const generateBtn = document.getElementById('generate-qr-btn');
+            const refreshBtn = document.getElementById('refresh-qr-btn');
+            const qrPlaceholder = document.getElementById('qr-placeholder');
+            const qrContainer = document.getElementById('qr-container');
+            const qrImage = document.getElementById('qr-image');
+
+            // 显示加载状态
+            generateBtn.innerHTML = '<span class="loading"></span> 生成中...';
+            generateBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/clawbot/bind/init/${userId}`);
+                const data = await response.json();
+
+                if (data.qr_code_base64) {
+                    // 显示二维码
+                    qrPlaceholder.classList.add('hidden');
+                    qrContainer.classList.remove('hidden');
+                    qrImage.src = `data:image/png;base64,${data.qr_code_base64}`;
+
+                    // 切换按钮
+                    generateBtn.classList.add('hidden');
+                    refreshBtn.classList.remove('hidden');
+
+                    // 开始倒计时
+                    const expiresAt = new Date(data.expires_at);
+                    startCountdown(expiresAt);
+
+                    // 开始轮询检查绑定状态
+                    startPolling();
+                }
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                alert('生成二维码失败，请重试');
+            } finally {
+                generateBtn.innerHTML = '生成二维码';
+                generateBtn.disabled = false;
+            }
+        }
+
+        // 倒计时
+        function startCountdown(expiresAt) {
+            clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date();
+                const diff = Math.floor((expiresAt - now) / 1000);
+
+                if (diff <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').textContent = '二维码已过期，请刷新';
+                } else {
+                    document.getElementById('countdown').textContent = `二维码将在 ${diff} 秒后过期`;
+                }
+            }, 1000);
+        }
+
+        // 开始轮询检查绑定状态
+        function startPolling() {
+            clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(() => {
+                checkBindingStatus();
+            }, 2000);
+        }
+
+        // 检查绑定状态
+        async function checkBindingStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/clawbot/bind/status/${userId}`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showUnboundState();
+                        return;
+                    }
+                    throw new Error('检查绑定状态失败');
+                }
+
+                const data = await response.json();
+                updateBindingUI(data);
+            } catch (error) {
+                console.error('检查绑定状态失败:', error);
+            }
+        }
+
+        // 更新绑定状态UI
+        function updateBindingUI(status) {
+            const statusBadge = document.getElementById('status-badge');
+            const unboundSection = document.getElementById('unbound-section');
+            const boundSection = document.getElementById('bound-section');
+
+            // 更新状态徽章
+            statusBadge.className = `status-badge ${status.status}`;
+            
+            const statusTexts = {
+                'pending': '等待绑定',
+                'bound': '已绑定',
+                'unbound': '未绑定',
+                'error': '绑定失败'
+            };
+            statusBadge.innerHTML = `<span class="status-dot"></span> ${statusTexts[status.status] || status.status}`;
+
+            if (status.status === 'bound') {
+                // 已绑定状态
+                clearInterval(pollingInterval);
+                clearInterval(countdownInterval);
+                
+                unboundSection.classList.add('hidden');
+                boundSection.classList.remove('hidden');
+                
+                document.getElementById('wechat-nickname').textContent = status.wechat_nickname || '微信用户';
+                document.getElementById('wechat-user-id').textContent = status.wechat_user_id || '';
+                
+                loadMessageHistory();
+            } else {
+                // 未绑定状态
+                showUnboundState();
+            }
+        }
+
+        // 显示未绑定状态
+        function showUnboundState() {
+            const unboundSection = document.getElementById('unbound-section');
+            const boundSection = document.getElementById('bound-section');
+            const qrPlaceholder = document.getElementById('qr-placeholder');
+            const qrContainer = document.getElementById('qr-container');
+            const generateBtn = document.getElementById('generate-qr-btn');
+            const refreshBtn = document.getElementById('refresh-qr-btn');
+
+            unboundSection.classList.remove('hidden');
+            boundSection.classList.add('hidden');
+            qrPlaceholder.classList.remove('hidden');
+            qrContainer.classList.add('hidden');
+            generateBtn.classList.remove('hidden');
+            refreshBtn.classList.add('hidden');
+        }
+
+        // 解绑ClawBot
+        async function unbindClawBot() {
+            if (!confirm('确定要解绑 ClawBot 吗？解绑后将无法接收订单通知。')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/clawbot/unbind/${userId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    alert('解绑成功');
+                    showUnboundState();
+                    loadMessageHistory();
+                } else {
+                    throw new Error('解绑失败');
+                }
+            } catch (error) {
+                console.error('解绑失败:', error);
+                alert('解绑失败，请重试');
+            }
+        }
+
+        // 加载消息历史
+        async function loadMessageHistory() {
+            const messagesEmpty = document.getElementById('messages-empty');
+            const messagesList = document.getElementById('messages-list');
+
+            try {
+                const response = await fetch(`${API_BASE}/clawbot/messages/${userId}`);
+                const data = await response.json();
+
+                if (data.messages && data.messages.length > 0) {
+                    messagesEmpty.classList.add('hidden');
+                    messagesList.classList.remove('hidden');
+                    
+                    // 渲染消息列表
+                    renderMessages(data.messages);
+                } else {
+                    messagesEmpty.classList.remove('hidden');
+                    messagesList.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('加载消息历史失败:', error);
+            }
+        }
+
+        // 渲染消息列表
+        function renderMessages(messages) {
+            const container = document.getElementById('messages-list');
+            container.innerHTML = messages.map(msg => `
+                <div class="message-item ${msg.direction}">
+                    <div class="message-bubble">
+                        ${msg.content}
+                        <div class="message-time">${new Date(msg.sent_at).toLocaleString('zh-CN')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 测试发送通知（仅用于演示）
+        async function sendTestNotification() {
+            try {
+                const response = await fetch(`${API_BASE}/orders/notification`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        order_id: 12345,
+                        notification_type: 'order_shipped',
+                        message: '您的订单 #12345 已发货！预计2-3天送达。'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('测试通知已发送');
+                    loadMessageHistory();
+                }
+            } catch (error) {
+                console.error('发送测试通知失败:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+gateway:
+  host: 0.0.0.0
+  port: 8765
+  admin_port: 8766
+  admin_token: "your-secret-admin-token-change-this-in-production"
+  log_level: info
+
+accounts:
+  # 这里会在添加Bot账户时自动填充
+  # 示例：
+  # main-bot:
+  #   credentials: ~/.clawbot-gateway/accounts/main-bot.json
+
+endpoints:
+  mall-system:
+    name: "商城系统"
+    type: http
+    url: "https://your-domain.com/api/clawbot/webhook"
+    api_key: "your-webhook-api-key-change-this-in-production"
+
+routing:
+  strategy: active-endpoint
+  mention_prefix: "@"
+  gateway_commands: ["/"]
+
+authorization:
+  mode: open
+  default_endpoints: ["mall-system"]
+  admins: []
+
+archive:
+  enabled: false
+  path: ~/.clawbot-gateway/archive.db
+  retention_days: 0
