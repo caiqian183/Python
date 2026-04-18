@@ -335,8 +335,12 @@ async def clawbot_webhook(request: Request, db: Session = Depends(get_db)):
             # 例如：将消息存入数据库、触发业务流程等
             print(f"收到微信消息 from {wechat_user_id}: {message_content}")
     
-    # 不需要回复，只需要记录
-    return {"success": True}
+    # 回复ClawBot网关，包含必要的字段
+    # 注意：根据ClawBot网关的要求，需要返回newMsgId字段
+    return {
+        "success": True,
+        "newMsgId": 0  # 这里返回0作为默认值，实际项目中可以根据需要设置
+    }
 
 @app.get("/api/clawbot/messages/{user_id}")
 async def get_wechat_messages(user_id: int, limit: int = 50, db: Session = Depends(get_db)):
